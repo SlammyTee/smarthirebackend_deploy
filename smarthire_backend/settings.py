@@ -32,7 +32,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key")
 DEBUG = True
 
 
-DJANGO_ALLOWED_HOSTS= os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = [
+    "smarthirebackend-deploy.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

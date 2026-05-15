@@ -1,13 +1,18 @@
-import os
-from xml.parsers.expat import model
-import certifi
+# core/nlp.py
+
 from sentence_transformers import SentenceTransformer
 
-os.environ['SSL_CERT_FILE'] = certifi.where()
+model = None
+
+def get_model():
+    global model
+
+    if model is None:
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+
+    return model
 
 
-
-sbert_model = SentenceTransformer('all-MiniLM-L6-v2')
-
-def generate_embedding(text: str):
-    return sbert_model.encode(text).tolist()  # convert numpy → list
+def generate_embedding(text):
+    model = get_model()
+    return model.encode(text).tolist()
