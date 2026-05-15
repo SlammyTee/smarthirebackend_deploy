@@ -12,11 +12,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+load_dotenv(BASE_DIR / ".env.dev")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -28,7 +32,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key")
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -158,16 +162,21 @@ WSGI_APPLICATION = 'smarthire_backend.wsgi.application'
 
 # Database configuration
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smarthire_db',
-        'USER': 'postgres',
-        'PASSWORD': 'sallam222',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("SQL_DATABASE"),
+        "USER": os.getenv("SQL_USER"),
+        "PASSWORD": os.getenv("SQL_PASSWORD"),
+        "HOST": os.getenv("SQL_HOST"),
+        "PORT": os.getenv("SQL_PORT"),
     }
 }
 
+if os.getenv("RENDER"):
+    DATABASES["default"] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -202,7 +211,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
